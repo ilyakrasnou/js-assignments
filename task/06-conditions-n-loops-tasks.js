@@ -260,19 +260,7 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-  const forEachDigit = (x, fun, initialValue = 0) => {
-    let result = initialValue;
-
-    for (let n = x; n > 0;) {
-      const digit = n % 10;
-      result = fun(result, digit);
-      n = (n - digit) / 10;
-    }
-
-    return result;
-  };
-
-  return forEachDigit(num, (c, d) => c * 10 + d, 0);
+  return Number.parseInt(reverseString(num.toString(10)), 10);
 }
 
 
@@ -297,31 +285,25 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-  const forEachDigit = (x, fun, initialValue = 0) => {
-    const number = x.toString();
-    let result = initialValue;
+  const number = ccn.toString();
+  let checksum = 0;
 
-    for (let i = 0; i < number.length; i += 1) {
-      const digit = Number.parseInt(number.charAt(number.length - 1 - i), 10);
-      result = fun(result, digit, i);
+  for (let i = 0; i < number.length; i += 1) {
+    const digit = Number.parseInt(number.charAt(number.length - 1 - i), 10);
+
+    if (i % 2 === 1) {
+      let doubleDigit = 2 * digit;
+      if (doubleDigit > 9) {
+        doubleDigit = ((doubleDigit - (doubleDigit % 10)) / 10) + (doubleDigit % 10);
+      }
+
+      checksum += doubleDigit;
+    } else {
+      checksum += digit;
     }
+  }
 
-    return result;
-  };
-
-  const calculateOneNumberSum = (x) => {
-    let result = x;
-    while (result > 9) {
-      result = forEachDigit(result, (a, b, _) => a + b, 0);
-    }
-
-    return result;
-  };
-
-  return forEachDigit(
-    ccn,
-    (c, d, i) => (i % 2 === 1 ? c + calculateOneNumberSum(2 * d) : c + d),
-  ) % 10 === 0;
+  return checksum % 10 === 0;
 }
 
 
@@ -340,22 +322,12 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-  const forEachDigit = (x, fun, initialValue = 0) => {
-    const number = x.toString();
-    let result = initialValue;
-
-    for (let i = 0; i < number.length; i += 1) {
-      const digit = Number.parseInt(number.charAt(number.length - 1 - i), 10);
-      result = fun(result, digit, i);
-    }
-
-    return result;
-  };
-
   let root = num;
 
   while (root > 9) {
-    root = forEachDigit(root, (c, d) => c + d, 0);
+    root = Array.from(root.toString())
+      .map((d) => Number.parseInt(d, 10))
+      .reduce((acc, x) => acc + x);
   }
 
   return root;
@@ -466,31 +438,31 @@ function isBracketsBalanced(str) {
  */
 function timespanToHumanString(startDate, endDate) {
   const diff = new Date(0);
-  const totalMilliseconds = endDate.getTime() - startDate.getTime();
+  const totalMilliseconds = startDate.getTime() - endDate.getTime();
   diff.setMilliseconds(totalMilliseconds);
 
   const totalSeconds = totalMilliseconds / 1000;
-  if (totalSeconds <= 45) return 'a few seconds ago';
-  if (totalSeconds <= 90) return 'a minute ago';
+  if (totalSeconds >= -45) return 'a few seconds ago';
+  if (totalSeconds >= -90) return 'a minute ago';
 
   const totalMinutes = totalSeconds / 60;
-  if (totalMinutes <= 45) return `${-Math.round(-totalMinutes)} minutes ago`;
-  if (totalMinutes <= 90) return 'an hour ago';
+  if (totalMinutes >= -45) return `${-Math.round(totalMinutes)} minutes ago`;
+  if (totalMinutes >= -90) return 'an hour ago';
 
   const totalHours = totalMinutes / 60;
-  if (totalHours <= 22) return `${-Math.round(-totalHours)} hours ago`;
-  if (totalHours <= 36) return 'a day ago';
+  if (totalHours >= -22) return `${-Math.round(totalHours)} hours ago`;
+  if (totalHours >= -36) return 'a day ago';
 
   const totalDays = totalHours / 24;
-  if (totalDays <= 25) return `${-Math.round(-totalDays)} days ago`;
-  if (totalDays <= 45) return 'a month ago';
+  if (totalDays >= -25) return `${-Math.round(totalDays)} days ago`;
+  if (totalDays >= -45) return 'a month ago';
 
   const totalMonths = totalDays / 30;
-  if (totalDays <= 345) return `${-Math.round(-totalMonths)} months ago`;
-  if (totalDays <= 545) return 'a year ago';
+  if (totalDays >= -345) return `${-Math.round(totalMonths)} months ago`;
+  if (totalDays >= -545) return 'a year ago';
 
   const totalYears = totalDays / 365;
-  return `${-Math.round(-totalYears)} years ago`;
+  return `${-Math.round(totalYears)} years ago`;
 }
 
 
