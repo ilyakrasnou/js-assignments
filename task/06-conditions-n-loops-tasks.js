@@ -325,8 +325,7 @@ function getDigitalRoot(num) {
   let root = num;
 
   while (root > 9) {
-    root = Array.from(root.toString())
-      .map((d) => Number.parseInt(d, 10))
+    root = Array.from(root.toString(), (d) => Number.parseInt(d, 10))
       .reduce((acc, x) => acc + x);
   }
 

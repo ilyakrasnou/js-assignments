@@ -33,7 +33,18 @@
  *
  */
 function* get99BottlesOfBeer() {
-    throw new Error('Not implemented');
+  yield '99 bottles of beer on the wall, 99 bottles of beer.';
+
+  for (let i = 98; i > 1; i -= 1) {
+    yield `Take one down and pass it around, ${i} bottles of beer on the wall.`;
+    yield `${i} bottles of beer on the wall, ${i} bottles of beer.`;
+  }
+
+  yield 'Take one down and pass it around, 1 bottle of beer on the wall.';
+  yield '1 bottle of beer on the wall, 1 bottle of beer.';
+  yield 'Take one down and pass it around, no more bottles of beer on the wall.';
+  yield 'No more bottles of beer on the wall, no more bottles of beer.';
+  yield 'Go to the store and buy some more, 99 bottles of beer on the wall.';
 }
 
 
@@ -47,7 +58,93 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-    throw new Error('Not implemented');
+  let current = 0;
+  let next = 1;
+
+  while (true) {
+    yield current;
+    [current, next] = [next, current + next];
+  }
+}
+
+// class Stack {
+//   constructor(element, next) {
+//     this.element = element;
+//     this.next = next;
+//   }
+
+//   push(element) {
+//     return new Stack(element, this);
+//   }
+
+//   pop() {
+//     return this.next;
+//   }
+
+//   peek() {
+//     return this.element;
+//   }
+
+//   isEmpty() {
+//     return this.next === undefined;
+//   }
+
+//   append(newStack) {
+//     if (this.isEmpty()) return newStack;
+
+//     let tail = this;
+//     while (!tail.next.isEmpty()) {
+//       tail = tail.next;
+//     }
+
+//     tail.next = newStack;
+
+//     return this;
+//   }
+
+//   static from(array) {
+//     const result = new Stack();
+//     let tail = result;
+
+//     array.map((x) => new Stack(x, new Stack())).reduce((acc, x) => {
+//       acc.next = x;
+//       return x;
+//     });
+
+//     for (const item of array) {
+//       const itemStack = new Stack(item);
+//       tail.next = itemStack;
+//       tail = itemStack;
+//     };
+
+//     tail.next = new Stack();
+
+//     return result.next;
+//   }
+// }
+
+class Queue {
+  constructor() {
+    this.inStack = [];
+    this.outStack = [];
+  }
+
+  enqueue(value) {
+    this.inStack.push(value);
+  }
+
+  dequeue() {
+    if (this.outStack.length === 0) {
+      this.outStack.push(...this.inStack.reverse());
+      this.inStack = [];
+    }
+
+    return this.outStack.pop();
+  }
+
+  isEmpty() {
+    return this.inStack.length === 0 && this.outStack.length === 0;
+  }
 }
 
 
@@ -82,7 +179,46 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-    throw new Error('Not implemented');
+  // yield root;
+
+  // if (root.children) {
+  //   for (const child of root.children) {
+  //     yield* depthTraversalTree(child, depth + 1);
+  //   }
+  // }
+    
+
+  // let stack = new Stack(root, new Stack());
+  // while (!stack.isEmpty()) {
+  //   const node = stack.peek();
+
+  //   yield node;
+
+  //   stack = stack.pop();
+
+  //   if (Array.isArray(node.children)) {
+  //     stack = Stack.from(node.children).append(stack);
+  //   }
+  // }
+
+  const stack = [];
+  stack.push(root);
+
+  while (stack.length !== 0) {
+    const node = stack.pop();
+
+    yield node;
+
+    if (Array.isArray(node.children)) {
+      // if (node.children.length < 5) {
+      //   for (const child of node.children) {
+      //     yield* depthTraversalTree(child);
+      //   }
+      // } else {
+        stack.push(...[...node.children].reverse());
+      // }
+    }
+  }
 }
 
 
@@ -108,7 +244,35 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-    throw new Error('Not implemented');
+  // const queue = new Queue();
+  // queue.enqueue([root]);
+
+  // while (!queue.isEmpty()) {
+  //   const children = queue.dequeue();
+
+  //   yield* children;
+
+  //   for (const child of children) {
+  //     if (child.children !== undefined) {
+  //       queue.enqueue(child.children);
+  //     }
+  //   }
+  // }
+
+  const queue = [];
+  queue.push([root]);
+
+  while (queue.length !== 0) {
+    const children = queue.shift();
+
+    yield* children;
+
+    for (const child of children) {
+      if (child.children !== undefined) {
+        queue.push(child.children);
+      }
+    }
+  }
 }
 
 
@@ -126,7 +290,31 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-    throw new Error('Not implemented');
+  const iterator1 = source1();
+  const iterator2 = source2();
+
+  let first = iterator1.next();
+  let second = iterator2.next();
+
+  while (!first.done && !second.done) {
+    if (first.value < second.value) {
+      yield first.value;
+      first = iterator1.next();
+    } else {
+      yield second.value;
+      second = iterator2.next();
+    }
+  }
+
+  while (!first.done) {
+    yield first.value;
+    first = iterator1.next();
+  }
+
+  while (!second.done) {
+    yield second.value;
+    second = iterator2.next();
+  }
 }
 
 
