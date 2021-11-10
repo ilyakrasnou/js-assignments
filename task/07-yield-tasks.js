@@ -67,86 +67,6 @@ function* getFibonacciSequence() {
   }
 }
 
-// class Stack {
-//   constructor(element, next) {
-//     this.element = element;
-//     this.next = next;
-//   }
-
-//   push(element) {
-//     return new Stack(element, this);
-//   }
-
-//   pop() {
-//     return this.next;
-//   }
-
-//   peek() {
-//     return this.element;
-//   }
-
-//   isEmpty() {
-//     return this.next === undefined;
-//   }
-
-//   append(newStack) {
-//     if (this.isEmpty()) return newStack;
-
-//     let tail = this;
-//     while (!tail.next.isEmpty()) {
-//       tail = tail.next;
-//     }
-
-//     tail.next = newStack;
-
-//     return this;
-//   }
-
-//   static from(array) {
-//     const result = new Stack();
-//     let tail = result;
-
-//     array.map((x) => new Stack(x, new Stack())).reduce((acc, x) => {
-//       acc.next = x;
-//       return x;
-//     });
-
-//     for (const item of array) {
-//       const itemStack = new Stack(item);
-//       tail.next = itemStack;
-//       tail = itemStack;
-//     };
-
-//     tail.next = new Stack();
-
-//     return result.next;
-//   }
-// }
-
-class Queue {
-  constructor() {
-    this.inStack = [];
-    this.outStack = [];
-  }
-
-  enqueue(value) {
-    this.inStack.push(value);
-  }
-
-  dequeue() {
-    if (this.outStack.length === 0) {
-      this.outStack.push(...this.inStack.reverse());
-      this.inStack = [];
-    }
-
-    return this.outStack.pop();
-  }
-
-  isEmpty() {
-    return this.inStack.length === 0 && this.outStack.length === 0;
-  }
-}
-
 
 /**
  * Traverses a tree using the depth-first strategy
@@ -179,28 +99,6 @@ class Queue {
  *
  */
 function* depthTraversalTree(root) {
-  // yield root;
-
-  // if (root.children) {
-  //   for (const child of root.children) {
-  //     yield* depthTraversalTree(child, depth + 1);
-  //   }
-  // }
-    
-
-  // let stack = new Stack(root, new Stack());
-  // while (!stack.isEmpty()) {
-  //   const node = stack.peek();
-
-  //   yield node;
-
-  //   stack = stack.pop();
-
-  //   if (Array.isArray(node.children)) {
-  //     stack = Stack.from(node.children).append(stack);
-  //   }
-  // }
-
   const stack = [];
   stack.push(root);
 
@@ -210,13 +108,7 @@ function* depthTraversalTree(root) {
     yield node;
 
     if (Array.isArray(node.children)) {
-      // if (node.children.length < 5) {
-      //   for (const child of node.children) {
-      //     yield* depthTraversalTree(child);
-      //   }
-      // } else {
-        stack.push(...[...node.children].reverse());
-      // }
+      stack.push(...[...node.children].reverse());
     }
   }
 }
@@ -244,21 +136,6 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-  // const queue = new Queue();
-  // queue.enqueue([root]);
-
-  // while (!queue.isEmpty()) {
-  //   const children = queue.dequeue();
-
-  //   yield* children;
-
-  //   for (const child of children) {
-  //     if (child.children !== undefined) {
-  //       queue.enqueue(child.children);
-  //     }
-  //   }
-  // }
-
   const queue = [];
   queue.push([root]);
 
