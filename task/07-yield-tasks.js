@@ -144,14 +144,20 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-  const queue = [[root]];
+  let inStack = [[root]];
+  let outStack;
 
-  for (const children of queue) {
-    for (const child of children) {
-      yield child;
+  while (inStack.length !== 0) {
+    outStack = inStack;
+    inStack = [];
 
-      if (Array.isArray(child.children)) {
-        queue.push(child.children);
+    for (const children of outStack) {
+      for (const child of children) {
+        yield child;
+
+        if (Array.isArray(child.children)) {
+          inStack.push(child.children);
+        }
       }
     }
   }
