@@ -144,8 +144,7 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-  const queue = [];
-  queue.push([root]);
+  const queue = [[root]];
 
   for (const children of queue) {
     for (const child of children) {
