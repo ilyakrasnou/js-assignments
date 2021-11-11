@@ -147,11 +147,11 @@ function* breadthTraversalTree(root) {
   const queue = [];
   queue.push([root]);
 
-  while (queue.length !== 0) {
-    for (const child of queue.shift()) {
+  for (const children of queue) {
+    for (const child of children) {
       yield child;
 
-      if (child.children !== undefined) {
+      if (Array.isArray(child.children)) {
         queue.push(child.children);
       }
     }
