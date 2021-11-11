@@ -106,8 +106,9 @@ function* depthTraversalTree(root) {
   const stack = [];
   stack.push(root.children.values());
 
-  for (let i = stack[stack.length - 1]; stack.length > 0; i = stack[stack.length - 1]) {
-    const node = i.next();
+  let node;
+  while (stack.length > 0) {
+    node = stack[stack.length - 1].next();
     if (!node.done) {
       yield node.value;
 
@@ -147,11 +148,9 @@ function* breadthTraversalTree(root) {
   queue.push([root]);
 
   while (queue.length !== 0) {
-    const children = queue.shift();
+    for (const child of queue.shift()) {
+      yield child;
 
-    yield* children;
-
-    for (const child of children) {
       if (child.children !== undefined) {
         queue.push(child.children);
       }
