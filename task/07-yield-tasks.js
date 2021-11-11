@@ -99,16 +99,23 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
+  yield root;
+
+  if (!Array.isArray(root.children)) return;
+
   const stack = [];
-  stack.push(root);
+  stack.push(root.children.values());
 
-  while (stack.length !== 0) {
-    const node = stack.pop();
+  for (let i = stack[stack.length - 1]; stack.length > 0; i = stack[stack.length - 1]) {
+    const node = i.next();
+    if (!node.done) {
+      yield node.value;
 
-    yield node;
-
-    if (Array.isArray(node.children)) {
-      stack.push(...[...node.children].reverse());
+      if (Array.isArray(node.value.children)) {
+        stack.push(node.value.children.values());
+      }
+    } else {
+      stack.pop();
     }
   }
 }
